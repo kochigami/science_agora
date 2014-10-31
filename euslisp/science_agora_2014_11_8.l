@@ -1,12 +1,12 @@
 #!/usr/bin/env roseus
 ;; jsk-ros-pkg/jsk_demos/interactive_behavior_201409のコードを見ながら書いています。
-(ros::load-ros-manifest "cultural_festival")
+(ros::load-ros-manifest "science_agora")
 
 (ros::roseus-add-msgs "face_detector_mono")
 (ros::roseus-add-msgs "nao_msgs") 
 (ros::roseus-add-msgs "std_msgs")
 
-(require :nao-interface "/home/kochigami/ros/groovy/cultural_festival/euslisp/nao-interface-kochigami.l")
+(require :nao-interface "~/ros/groovy/science_agora/euslisp/nao-interface-kochigami.l")
 (ros::roseus "interaction_behavior_by_nao")
 
 (ros::advertise "nao_learn_word" std_msgs::string 1)
@@ -142,7 +142,7 @@
 (setq *character-list* nil)
 (setq *call_num* 0)
 (setq *pub_num* 0)
-(setq *pre-japanese-char* "なかもりあきな")
+(setq *pre-japanese-char* "なかもりあきなだいすき")
 (setq *nao_secret_num* 0)
 (setq *launchpad_count* 0)
 ;;(setq *register-check* 10)
@@ -221,7 +221,7 @@
 		)
 	      (when (> (send (ros::time- now *behavior-start-time*) :to-sec) 10)
 		(if (= *nao_touch_pattern* 12)
-		    (if (> *head_touch_count* 5)
+		    (if (> *head_touch_count* 10) ;;5
 			(progn 
 			  ;;もういいよ　ありがとう
 			  (if (= *speak_num2* 0)
@@ -274,7 +274,7 @@
 		)
 	      (when (> (send (ros::time- now *behavior-start-time*) :to-sec) 20)
 		(if (or (and (> (- *head_touch_count* *head_touch_count_pre*) 0) (= *nao_touch_pattern* 1))
-			(and (< (- *head_touch_count* *head_touch_count_pre*) 5) (= *nao_touch_pattern* 0))
+			(and (< (- *head_touch_count* *head_touch_count_pre*) 20) (= *nao_touch_pattern* 0)) ;;5
 			(and (> (- *head_touch_count*  *head_touch_count_pre*) 0) (= *nao_touch_pattern* 3)))
 		    (progn
 		      ;;ありがとう
@@ -311,7 +311,8 @@
 			  (set-behavior :idle)
 			  )
 		      )
-		    (if (and (> (- *head_touch_count*  *head_touch_count_pre*) 5) (= *nao_touch_pattern* 0))
+		    (if (and (> (- *head_touch_count*  *head_touch_count_pre*) 20) (= *nao_touch_pattern* 0))
+			;;5
 			(progn
 			  (if (= *speak_num6* 0)
 			      (progn
@@ -348,6 +349,7 @@
 		  (setq *current-behavior* :idle)
 		  (unix:sleep 3)
 		  (setq *conversation_finished* 0)
+		  (send *ni* :play-soundfile "/home/nao/wav_test/nao_nikki_wo_kaitayo.wav")
 		  (send *ni* :play-soundfile "/home/nao/wav_test/nao_to_asondakoto_wasurenaidene.wav")
 		  ;;added 
 		  ;;(send *ni* :angle-vector-sequence (list wasurenaide wasurenaide2 wasurenaide3 *start-position*) (list 1000 1500 2000 4500))
@@ -399,15 +401,16 @@
 	  ;;(unix:sleep 2)
 	  ;;okマークを見せて                                                                 
 	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/jyaaikuyo.wav")
+	  ;;最初の質問 "すきなお菓子は？"
 	  (setq rand_num (random 3))
 	  (if (= rand_num 0)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/onamaeha.wav")
+	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
 	    )
 	  (if (= rand_num 1)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/namaehananteiuno.wav")
+	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
 	    )
 	  (if (= rand_num  2)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/nanteiunamae.wav")
+	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
 	    )
 	  ;;(send *ni* :angle-vector-sequence (list ok *start-position*) (list 1000 5000))
 	  ;;(send *ni* :wait-interpolation)
