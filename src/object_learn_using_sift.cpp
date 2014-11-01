@@ -386,7 +386,7 @@ public:
 
 	sprintf(picture_name, (default_template_file_name+std::string("/picture/test_image%04d.png")).c_str(),count2);
 	count2++;
-	sleep(21);
+	
 	cv::imwrite(picture_name,temp_img);
 	pic_count++;
 	ROS_INFO("picture get!!");

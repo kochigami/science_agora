@@ -385,11 +385,13 @@
 	  ;;ナオにカードを持たせて、身振りで説明してもらおう
 	  (send *ni* :play-soundfile "/home/nao/wav_test/aisatu_ga_okuretane.wav")
 	  (send *ni* :play-soundfile "/home/nao/wav_test/konnichiwa.wav")
+	  (send *ni* :play-soundfile "/home/nao/wav_test/kyouha_science_agora_ni_kitekurete_arigatou.wav")
+	  (send *ni* :play-soundfile "/home/nao/wav_test/nao_minna_no_koto_siritainaa.wav")
 	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/nao_korekara_situmon_surune.wav")
 	  ;;added
 	  (send *ni* :angle-vector-sequence (list siritaina siritaina2 *start-position*) (list 3000 4000 5000))
 	  ;;added end 
-	  (send *ni* :play-soundfile "/home/nao/wav_test/nao_anatanokoto_siritainaa.wav")
+	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/nao_anatanokoto_siritainaa.wav")
 	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/naokaraonegai.wav")
 	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/korekara_anata_ni_situmon_surukara.wav")
 	  ;;(unix:sleep 1)
