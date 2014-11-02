@@ -84,7 +84,7 @@ public:
     char fname[256];
     string hiragana;
     ROS_INFO("before read");
-    for(int i=1; i<49; i++){   
+    for(int i=1; i<78; i++){   
       //sprintf(fname, "/home/kochigami/ros/groovy/cultural_festival/src/image%04d.png",i);
       //sprintf(fname, "/home/kochigami/ros/groovy/karuta/img%04d.png",i);
       sprintf(fname, (default_template_file_name+std::string("/karuta/img%04d.png")).c_str(),i);
@@ -109,6 +109,16 @@ public:
       if(i==40) hiragana="り";if(i==41) hiragana="る";if(i==42) hiragana="れ";
       if(i==43) hiragana="ろ";if(i==44) hiragana="わ";if(i==45) hiragana="を";
       if(i==46) hiragana="ん";if(i==47) hiragana="おわり";if(i==48) hiragana="おしまい"; 
+      if(i==49) hiragana="が";if(i==50) hiragana="ぎ";if(i==51) hiragana="ぐ";
+      if(i==52) hiragana="げ";if(i==53) hiragana="ご";if(i==54) hiragana="ざ";
+      if(i==55) hiragana="じ";if(i==56) hiragana="ず";if(i==57) hiragana="ぜ";
+      if(i==58) hiragana="ぞ";if(i==59) hiragana="だ";if(i==60) hiragana="ぢ";
+      if(i==61) hiragana="づ";if(i==62) hiragana="で";if(i==63) hiragana="ど";
+      if(i==64) hiragana="ば";if(i==65) hiragana="び";if(i==66) hiragana="ぶ";
+      if(i==67) hiragana="べ";if(i==68) hiragana="ぼ";if(i==69) hiragana="ゃ";
+      if(i==70) hiragana="ゅ";if(i==71) hiragana="ょ";if(i==72) hiragana="　";
+      if(i==73) hiragana="ぱ";if(i==74) hiragana="ぴ";if(i==75) hiragana="ぷ";
+      if(i==76) hiragana="ぺ";if(i==77) hiragana="ぽ";
 
       template_imgs.push_back(template_data(dst_img, detector, extractor, hiragana.c_str()));
     }
