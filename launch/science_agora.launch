@@ -1,0 +1,43 @@
+<launch>
+  <env name = "PYTHONPATH" value="$(env PYTHONPATH)"/>
+  <arg name="nao_ip" default="$(optenv NAO_IP 127.0.0.1)"/>
+  <arg name="launchpad" default="true" />
+  <!--japanese character recognition by using sift-->
+  <include file="$(find science_agora)/launch/nao_object_learn_using_sift.launch"/>
+
+  <!--face recognition-->
+  <include file="$(find science_agora)/launch/nao_face_detect_demo.launch"/>
+  <!--main program about nao's movement-->
+  <node name="main_program"
+        pkg="roseus" type="roseus"
+        args="$(find science_agora)/euslisp/science_agora_2014_11_8.l" 
+	respawn="true"/>
+
+  <!--programs for counting launchpad input-->
+  <!--node name="launchpad_count"
+        pkg="science_agora" type="launchpad-record"
+	respawn="true"/-->
+
+  
+   <!--launchpad-->
+  <include if = "$(arg launchpad)"
+	   file="$(find science_agora)/launch/launchpad_hiragana_sender.launch"/>
+
+  <!--subscribe japanese character topic and collect one character to one word-->
+  <node name="hiragana_subscribe"
+        pkg="roseus" type="roseus"
+        args="$(find science_agora)/euslisp/hiragana_subscribe.l"
+	respawn="true"/>
+
+  <!--for diary as a html file display-->
+  <node name="nao_japanese_character_recognition"
+        pkg="science_agora" type="diary_publish.py"
+	respawn="true"/>
+
+  <!--for nao speaking-->
+  <node name="nao_speaking"
+        pkg="science_agora" type="play_voice_text_subscriber.py" args="$(arg nao_ip)" 
+	respawn="true"/>
+
+
+</launch>
