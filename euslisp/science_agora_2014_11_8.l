@@ -192,6 +192,10 @@
 (setq *launchpad-input* 0)
 ;; for tactile-detect-cb
 (setq *head_touch_count* 0) 
+;;for karuta-detect-cb
+(setq *karuta_sound_num* 0)
+(setq *karuta_sound_num2* 0)
+
 
 ;; ---behaviors---
 ;; :idle -> sometimes look and speak
@@ -396,12 +400,15 @@
 		  ;;test
 		  (send *ni* :angle-vector-sequence (list *first-pose* diary_write diary_write2 diary_write3 diary_write4 *first-pose*) (list 1000 1500 2000 2500 3000 4000))
 		  ;;test end
+		  (send *ni* :play-soundfile "/home/nao/wav_test/science_communicater_no_hondasan.wav")
+		  ;;呼ぶ動作
+		  (send *ni* :angle-vector-sequence (list wasurenaide wasurenaide2 wasurenaide3 *start-position*) (list 1000 1500 2000 4500))
 		  (send *ni* :play-soundfile "/home/nao/wav_test/nao_to_asondakoto_wasurenaidene.wav")
 		  ;;added 
 		  ;;(send *ni* :angle-vector-sequence (list wasurenaide wasurenaide2 wasurenaide3 *start-position*) (list 1000 1500 2000 4500))
 		  ;;added end
 		  (unix:sleep 2)
-		  (send *ni* :play-soundfile "/home/nao/wav_test/jyaane.wav")
+		  ;;(send *ni* :play-soundfile "/home/nao/wav_test/jyaane.wav")
 		  ;;added 
 		  (send *ni* :angle-vector-sequence (list jyaane jyaane2 jyaane3 jyaane4 jyaane5 *start-position*) (list 2000 2200 2400 2600 2800 4000))
 		  ;;added end
@@ -454,16 +461,9 @@
 	  ;;okマークを見せて                                                                 
 	  ;;(send *ni* :play-soundfile "/home/nao/wav_test/jyaaikuyo.wav")
 	  ;;最初の質問 "すきなお菓子は？"
-	  (setq rand_num (random 3))
-	  (if (= rand_num 0)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
-	    )
-	  (if (= rand_num 1)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
-	    )
-	  (if (= rand_num  2)
-	      (send *ni* :play-soundfile "/home/nao/wav_test/sukina_okashi_ha_naani.wav")
-	    )
+	  (send *ni* :play-soundfile "/home/nao/wav_test/mazu_saisyo_no_situmon_dayo.wav")
+	  (send *ni* :play-soundfile "/home/nao/wav_test/tenki_question.wav")
+	  
 	  ;;(send *ni* :angle-vector-sequence (list ok *start-position*) (list 1000 5000))
 	  ;;(send *ni* :wait-interpolation)
 	  ;;(send *ni* :angle-vector-sequence (list osimai *start-position*) (list 1000 3000))
@@ -565,7 +565,11 @@
 		(send publish-msg :data (elt *character-list* 0))
 		(ros::publish "nao_learn_word" publish-msg)
 		(setq *character-list* nil)
-		(send *ni* :play-soundfile "/home/nao/wav_test/ok.wav")
+		(if (string= *pre-japanese-char* "おしまい")
+		    (send *ni* :play-soundfile "/home/nao/wav_test/ok.wav")
+		  )
+		(setq *karuta_sound_num* 0)
+		(setq *karuta_sound_num2* 0)
 		;;test
 		(send *ni* :angle-vector-sequence (list *first-pose* ok_pose  *first-pose*) (list 500 800 1100))
 		;;test end
@@ -830,7 +834,7 @@
 		    (if (string= japanese-char "ぽ")
                         (send *ni* :play-soundfile "/home/nao/wav_test/po.wav"))
 		    (if (string= japanese-char "　")
-                        (send *ni* :play-soundfile "/home/nao/wav_test/space.wav"))
+                        (send *ni* :play-soundfile "/home/nao/wav_test/jyaa_tsugi_no_hito.wav"))
 
 		    ;;added end
 		    
@@ -886,6 +890,71 @@
       )
     )
   )
+(defun karuta-detect-cb (msg)
+  (let ((point 0) (pointX 0) (pointY 0) (width 0) (height 0) 
+	(current-pitch (send *nao* :head :neck-p :joint-angle))
+	(current-yaw   (send *nao* :head :neck-y :joint-angle))
+	(next-pitch 0) (next-yaw 0) (y-k 0.08) (p-k 0.05) (radius 100))
+    (when (send msg :rects) 
+      (setq point (car (send msg :rects)))
+      (setq pointX (send point :x))
+      (setq pointY (send point :y))
+      (setq width (send point :width))
+      (setq height (send point :height))
+      ;;(set-behavior :eyecontact)
+      (send *nao* :angle-vector (send *ni* :state :potentio-vector))
+      (setq current-pitch (send *nao* :head :neck-p :joint-angle))
+      (setq current-yaw   (send *nao* :head :neck-y :joint-angle))
+      
+      (if (> (+ (expt (- pointX 320) 2) (expt (- pointY 240) 2)) (expt radius 2))
+	  (progn
+	    (if (> pointX 320)
+		(send *nao* :head :neck-y :joint-angle (- current-yaw (* y-k (- pointX 320))))
+	      (send *nao* :head :neck-y :joint-angle (+ current-yaw (* y-k (- 320 pointX)))))
+	    (if (> pointY 240)
+		(send *nao* :head :neck-p :joint-angle (+ current-pitch (* p-k (- pointY 240))))
+	      (send *nao* :head :neck-p :joint-angle (- current-pitch (* p-k (- 240 pointY)))))		
+	    (setq next-pitch (send *nao* :head :neck-p :joint-angle))
+	    (setq next-yaw   (send *nao* :head :neck-y :joint-angle))
+	    (let ((diff (max (abs (- next-pitch current-pitch))
+			     (abs (- next-yaw current-yaw)))))
+	      (let ((tm (/ diff 40.0)))
+		(send *ni* :angle-vector (send *nao* :angle-vector) (* 1000.0 tm))
+		)
+	      )
+	    )
+	)
+      (if (or (> width 400) (> height 500))
+	  (progn
+	    (if (= *karuta_sound_num* 0)
+		(progn
+		  (send *ni* :play-soundfile "/home/nao/wav_test/motto_toozakete.wav")
+		  (setq *karuta_sound_num* (+ *karuta_sound_num* 1))
+		  )
+	      
+	      )
+	    )
+	)
+      (if (or (< width 150) (< height 250))
+	  (progn
+	    (if (= *karuta_sound_num2* 0)
+		(progn
+		  (send *ni* :play-soundfile "/home/nao/wav_test/motto_chikazukete.wav")
+		  (setq *karuta_sound_num2* (+ *karuta_sound_num2* 1))
+		  )
+	      )
+	    )
+	)
+      
+      
+      )
+    )
+  )
+
+
+
+
+
 
 (defun conversation-finished-cb (msg)
   (setq *conversation_finished* 1)
@@ -940,6 +1009,7 @@
 (ros::subscribe "/conversation_finished" std_msgs::String #'conversation-finished-cb)
 (ros::subscribe "/hiragana_send_to_nao" std_msgs::String #'launchpad-cb)
 (ros::subscribe "/bumper" nao_msgs::Bumper #'bumper-touch-cb)
+(ros::subscribe "/nao_karuta_size" face_detector_mono::RectArray #'karuta-detect-cb)
 
 ;;main loopを回す
 (ros::ros-info "Let's start")

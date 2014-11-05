@@ -4,21 +4,21 @@
 (ros::roseus "character_subscriber")
 (ros::roseus-add-msgs "std_msgs")
 
-(require :nao-interface "/home/kochigami/ros/groovy/science_agora/euslisp/nao-interface-kochigami.l")
+(require :nao-interface "~/ros/groovy/science_agora/euslisp/nao-interface-kochigami.l")
 
 (setq *nao* (nao))
 (setq *ni* (instance nao-interface :init))
 (setq *name_learn* 0)
-(setq *okashi_data* nil)
-(setq *animal_data* nil)
-(setq *subject_data* nil)
+(setq *tenki_data* nil)
+(setq *comefrom_data* nil)
 (setq *food_data* nil)
-(setq *color_data* nil)
-(setq *okashi-list* nil)
-(setq *animal-list* nil)
-(setq *subject-list* nil)
+(setq *subject_data* nil)
+(setq *image_data* nil)
+(setq *tenki-list* nil)
+(setq *comefrom-list* nil)
 (setq *food-list* nil)
-(setq *color-list* nil)
+(setq *subject-list* nil)
+(setq *image-list* nil)
 
 (setq *start-position* #f(80.7701 11.1598 -46.4971 -59.764 7.46839 82.2691 -10.3736 45.965 59.5051 -6.94585 -14.3239 -4.48007 -39.6368 121.039 -67.9785 4.30665 -14.3239 4.48488 -39.9931 121.039 -67.97 -4.34702 0.788627 3.0738))
 
@@ -277,7 +277,7 @@
 
 (defclass making_newspaper_about_you_class
   :super propertied-object
-  :slots (*okashi_data* *animal_data* *subject_data* *food_data* *color_data*))
+  :slots (*tenki_data* *comefrom_data* *food_data* *subject_data* *image_data*))
 
 (defmethod making_newspaper_about_you_class
   (:init ()
@@ -292,9 +292,9 @@
 		   (if (string= (send msg :data) "おしまい")
 		       (if (= *name_learn* 4)
 			   (progn
-			     (nao-calling *color-list*)
+			     (nao-calling *image-list*)
 			     (send *ni* :angle-vector-sequence (list *first-pose* kurikaesi kurikaesi2 kurikaesi3 *first-pose*) (list 500 1000 1500 2000 2500))
-			     (setq *color-list* nil)
+			     (setq *image-list* nil)
 			     ;;(print '友達ができたよ。名前は)
 			     ;;(print *okashi_data*)
 			     ;;(print 'っていうんだよ。)
@@ -309,60 +309,48 @@
 			     (setq msg6 (instance std_msgs::string :init)) 
 
 			     (send msg :data "写真をとる")
-			     (send msg2 :data *okashi_data*)
-			     (send msg3 :data *animal_data*)
-			     (send msg4 :data *subject_data*)
-			     (send msg5 :data *food_data*)
-			     (send msg6 :data *color_data*)
+			     (send msg2 :data *tenki_data*)
+			     (send msg3 :data *comefrom_data*)
+			     (send msg4 :data *food_data*)
+			     (send msg5 :data *subject_data*)
+			     (send msg6 :data *image_data*)
 			   
 			     ;;added 
-			     (if (string= "なお" *okashi_data*)
+			     (if (or (substringp *food_data* "せんべい")
+				     (substringp *food_data* "おせんべい"))
 				 (progn
-				   (setq nao-name-msg (instance std_msgs::string :init))
-				   (send nao-name-msg :data "なまえがなお")
-				   (ros::publish "/nao_secret_mode_name" nao-name-msg)
+				   (setq nao-food-msg (instance std_msgs::string :init))
+				   (send nao-food-msg :data "せんべいが好き")
+				   (ros::publish "/nao_secret_mode_name" nao-food-msg)
 				   )
 			       )
 			     
-			     (if (string= "なお" *animal_data*)
+			     (if (substringp  *subject_data* "さんすう")
 				 (progn
 				   (setq nao-favorite-msg (instance std_msgs::string :init))
-				   (send nao-favorite-msg :data "すきなものがなお")
+				   (send nao-favorite-msg :data "さんすうがとくい")
 				   (ros::publish "/nao_secret_mode_favorite" nao-favorite-msg)
 				   )
 			       )
+			     
+			     ;; (if (substringp  *subject_data* "りか")
+			     ;; 	 (progn
+			     ;; 	   (setq nao-favorite-msg (instance std_msgs::string :init))
+			     ;; 	   (send nao-favorite-msg :data "りかがとくい")
+			     ;; 	   (ros::publish "/nao_secret_mode_subject" nao-favorite-msg)
+			     ;; 	   )
+			     ;;   )
 
 			     ;;added end
 			     
 			     (unix:sleep 1)
-			     (if (substringp "あお" *color_data* )
-				 (progn
-				   (send *ni* :play-soundfile "/home/nao/wav_test/nao_mo_aoiro_ga_suki.wav")
-				   )
-			       (progn
-				 (setq rand_num (random 5))
-				 (if (= rand_num 0)
-				     (send *ni* :play-soundfile "/home/nao/wav_test/sounanda.wav")
-				   )
-				 (if (= rand_num 1)
-				     (send *ni* :play-soundfile "/home/nao/wav_test/naruheso.wav")
-				   )
-				 (if (= rand_num 2)
-				     (send *ni* :play-soundfile "/home/nao/wav_test/humuhumu.wav")
-				   )
-				 (if (= rand_num 3)
-				     (send *ni* :play-soundfile "/home/nao/wav_test/sorya_bikkuri_de_gozaru.wav")
-				   )
-				 (if (= rand_num 4)
-				     (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_aoiro_ga_suki.wav")
-				   )
-				 )
-			       )
+			     (send *ni* :play-soundfile "/home/nao/wav_test/arigatou_teretyau.wav")
+			     (send *ni* :play-soundfile "/home/nao/wav_test/minna_nao_to_otomodachi_ni_nattekureru.wav")
 			     (send *ni* :angle-vector-sequence (list favorite_interview  *start-position*) (list 2000 3000))
-			     (unix:sleep 1)
-			     (send *ni* :play-soundfile "/home/nao/wav_test/jyaa_syasin_wo_toruyo.wav")
+			     (unix:sleep 10) ;;要変更
+			     (send *ni* :play-soundfile "/home/nao/wav_test/kinen_ni_syasin_wo_toruyo.wav")
 			     ;;test
-			     (send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500))
+			     ;;(send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500))
 			     ;;test end
 
 			     (send *ni* :play-soundfile "/home/nao/wav_test/jyuu_byou_kazoeruyo.wav")
@@ -380,21 +368,23 @@
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ni.wav")
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ichi.wav")
 			     (send *ni* :play-soundfile "/home/nao/wav_test/kasya.wav")
-			     (unix:sleep 18)
-			     (ros::publish "/nao_friend_okashi" msg2)
-			     (ros::publish "/nao_friend_animal" msg3)
-			     (ros::publish "/nao_friend_subject" msg4)
-			     (ros::publish "/nao_friend_food" msg5)
-			     (ros::publish "/nao_friend_color" msg6)
+			     (unix:sleep 15) ;;この配分をしらべる
+			     (send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500)) ;;この配分をしらべる
+			     (unix:sleep 10)
+			     (ros::publish "/nao_friend_tenki" msg2)
+			     (ros::publish "/nao_friend_comefrom" msg3)
+			     (ros::publish "/nao_friend_food" msg4)
+			     (ros::publish "/nao_friend_subject" msg5)
+			     (ros::publish "/nao_friend_image" msg6)
 			     (ros::publish "/nao_taking_picture_permission" msg)
 			   
 			     
 			     (ros::ros-info "take a photo")
-			     (setq *okashi_data* nil)
-			     (setq *animal_data* nil)
-			     (setq *subject_data* nil)
+			     (setq *tenki_data* nil)
+			     (setq *comefrom_data* nil)
 			     (setq *food_data* nil)
-			     (setq *color_data* nil)
+			     (setq *subject_data* nil)
+			     (setq *image_data* nil)
 			     (setq *name_learn* 0)
 			     )
 			 (progn
@@ -404,128 +394,104 @@
 
 			   ;;名前を呼ぶ機能をつけたい
 			   ;;added 
-			   ;;*name_learn*==1 ならお菓子
+			   ;;*name_learn*==1 なら天気
 			   (if (= *name_learn* 1)
 			       (progn
 				 ;;test
 				 (send *ni* :angle-vector-sequence (list *first-pose* ok_card ok_card2 ok_card3 *first-pose*) (list 500 1000 1500 2000 2500))
 				 
 				 ;;test end
-				 (nao-calling *okashi-list*)
-				 (setq *okashi-list* nil)
-				 ;;(send *ni* :play-soundfile "/home/nao/wav_test/san.wav")
+				 (nao-calling *tenki-list*)
+				 (setq *tenki-list* nil)
+				 (send *ni* :play-soundfile "/home/nao/wav_test/dane.wav")
 				 ;;added end
-				 (if (or (substringp  "おせんべい" *okashi_data*) 
-					 (substringp "せんべい" *okashi_data*))
+				 (if  (substringp  "はれ" *tenki_data*)
 				     (progn
-				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_mo_osenbei_ga_suki.wav")
+				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_hare_ga_daisuki.wav")
 				       )
-				   (progn
-				     (setq rand_num2 (random 3))
-				     (if (= rand_num2 0)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_osenbei_ga_suki.wav")
-				       )
-				     (if (= rand_num2 1)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/humuhumu.wav")
-				       )
-				     (if (= rand_num2 2)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/naruheso.wav")
+				   (if  (substringp  "あめ" *tenki_data*)
+				       (progn
+					 (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_okiniiri_no_raincoat.wav")
+				     
+					 )
+				     (progn
+				       ;;(send *ni* :play-soundfile "/home/nao/wav_test/nanda.wav")
+				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_hare_ga_daisuku_dayo.wav")
 				       )
 				     )
 				   )
 				     
 				 (send *ni* :angle-vector-sequence (list name_interview name_interview2 *start-position*) (list 2500 3500 4500))
 				 (unix:sleep 2)
-				 (send *ni* :play-soundfile "/home/nao/wav_test/sukina_doubutsu_ha_naani.wav")
+				 (send *ni* :play-soundfile "/home/nao/wav_test/tsugi_no_hito_douzo.wav")
+				 (send *ni* :play-soundfile "/home/nao/wav_test/kyou_ha_dokokara_kitano.wav")
 				 
 				 )
 			     )
-			   (if (= *name_learn* 2)
+			   (if (= *name_learn* 2) ;;どこから来たのか
 			       (progn
 				 (send *ni* :angle-vector-sequence (list *first-pose* repetition_pose1 *first-pose*) (list 500 800 1100))
-				 (nao-calling *animal-list*)
-				 (setq *animal-list* nil)
-				 (if (substringp "うさぎ" *animal_data*)
-				     (progn
-				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_mo_usagisan_ga_suki.wav")
-				       )
-				   (progn
-				     (setq rand_num2 (random 3))
-				     ;;返答変える
-				     (if (= rand_num2 0)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_usagisan_ga_suki.wav")
-				       )
-				     (if (= rand_num2 1)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/humuhumu.wav")
-				       )
-				     (if (= rand_num2 2)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/sorya_bikkuri_de_gozaru.wav")
-				       )
-				     )
-				   )
-				 ;;動き・次の質問を変える (科目）
-				 (send *ni* :angle-vector-sequence (list name_interview name_interview2 *start-position*) (list 2500 3500 4500))
-				 (unix:sleep 2)
-				 (send *ni* :play-soundfile "/home/nao/wav_test/sukina_kamoku_ha_naani.wav")
-				 )
-			     )
-			   (if (= *name_learn* 3)
-			       (progn
-				 (send *ni* :angle-vector-sequence (list *first-pose* repetition_pose2 *first-pose*) (list 500 800 1100))
-				 (nao-calling *subject-list*)
-				 (setq *subject-list* nil)
-				 (if  (substringp "りか" *subject_data*)
-					 
-				     (progn
-				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_mo_rika_ga_suki.wav")
-				       )
-				   (progn
-				     (setq rand_num2 (random 3))
-				     ;;返答変える
-				     (if (= rand_num2 0)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_rika_ga_suki.wav")
-				       )
-				     (if (= rand_num2 1)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/humuhumu.wav")
-				       )
-				     (if (= rand_num2 2)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/naruheso.wav") 
-				       )
-				     )
-				   )
+				 (nao-calling *comefrom-list*)
+				 (setq *comefrom-list* nil)
+				 (send *ni* :play-soundfile "/home/nao/wav_test/umare_ha_france.wav")
+				 (unix:sleep 7)
+				 ;;ちょっとビックリしたでしょの動き
+				 (send *ni* :play-soundfile "/home/nao/wav_test/tyotto_bikkuri_sitadesyo.wav")
 				 ;;動き・次の質問を変える (食べ物）
 				 (send *ni* :angle-vector-sequence (list name_interview name_interview2 *start-position*) (list 2500 3500 4500))
 				 (unix:sleep 2)
+				 (send *ni* :play-soundfile "/home/nao/wav_test/tsugi_no_hito_douzo.wav")
 				 (send *ni* :play-soundfile "/home/nao/wav_test/sukina_tabemono_ha_naani.wav")
 				 )
 			     )
-			   (if (= *name_learn* 4)
+			   (if (= *name_learn* 3) ;;食べ物
 			       (progn
-				 (send *ni* :angle-vector-sequence (list *first-pose* repetition_pose3 *first-pose*) (list 500 800 1100))
+				 (send *ni* :angle-vector-sequence (list *first-pose* repetition_pose2 *first-pose*) (list 500 800 1100))
+				 ;;(nao-calling *food-list*)
 				 (nao-calling *food-list*)
 				 (setq *food-list* nil)
-				 (if (substringp "おむらいす" *food_data*)
+				 (if  (or (substringp "おせんべい" *food_data*)
+					  (substringp "せんべい" *food_data*))
+				     
 				     (progn
-				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_mo_omuraisu_ga_suki.wav")
+				       ;;(setq *food-list* nil)
+				       (send *ni* :play-soundfile "/home/nao/wav_test/wao_osenbei.wav")
 				       )
 				   (progn
-				     (setq rand_num2 (random 3))
-				     ;;返答変える
-				     (if (= rand_num2 0)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_omuraisu_ga_suki.wav")
-				       )
-				     (if (= rand_num2 1)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/naruheso.wav")
-				       )
-				     (if (= rand_num2 2)
-					 (send *ni* :play-soundfile "/home/nao/wav_test/humuhumu.wav")
-				       )
+				     (send *ni* :play-soundfile "/home/nao/wav_test/naruhodo.wav")
+				     ;;(nao-calling *food-list*)
+				     ;;(setq *food-list* nil)
+				     (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_osenbei_ga_daisuki.wav")
+
 				     )
 				   )
-				 ;;動き・次の質問を変える (色）
+				 ;;動き・次の質問を変える (得意科目）
 				 (send *ni* :angle-vector-sequence (list name_interview name_interview2 *start-position*) (list 2500 3500 4500))
 				 (unix:sleep 2)
-				 (send *ni* :play-soundfile "/home/nao/wav_test/sukina_iro_ha_naani.wav")
+				 (send *ni* :play-soundfile "/home/nao/wav_test/tsugi_no_sitsumon_dayo.wav")
+				 (send *ni* :play-soundfile "/home/nao/wav_test/ichiban_tokui_na_kamokuha_naani.wav")
+				 )
+			     )
+			   (if (= *name_learn* 4) ;;得意科目
+			       (progn
+				 (send *ni* :angle-vector-sequence (list *first-pose* repetition_pose3 *first-pose*) (list 500 800 1100))
+				 (nao-calling *subject-list*)
+				 (setq *subject-list* nil)
+				 (if (substringp "さんすう" *subject_data*)
+				     (progn
+				       (send *ni* :play-soundfile "/home/nao/wav_test/sansuu_nao_ha_nigate.wav")
+				       )
+				   (progn
+				     ;;(nao-calling *subject-list*)
+				     ;;(setq *subject-list* nil)
+				     (send *ni* :play-soundfile "/home/nao/wav_test/rika_nao_ha_suki.wav")
+				     )
+				   )
+				 ;;動き・次の質問を変える (ナオの印象）
+				 (send *ni* :angle-vector-sequence (list name_interview name_interview2 *start-position*) (list 2500 3500 4500))
+				 (unix:sleep 2)
+				 (send *ni* :play-soundfile "/home/nao/wav_test/korega_saigo_no_sitsumon_dayo.wav")
+				 (send *ni* :play-soundfile "/home/nao/wav_test/nao_no_koto_dou_omou.wav")
 				 )
 			     )
 			   
@@ -535,38 +501,38 @@
 		       (if (= *name_learn* 0)
 			   ;;added
 			   (progn
-			     (setq *okashi_data* (concatenate string *okashi_data* (send msg :data)))           
+			     (setq *tenki_data* (concatenate string *tenki_data* (send msg :data)))           
 			     ;;added 
-			     (setq *okashi-list* (append *okashi-list* (list (send msg :data))))
+			     (setq *tenki-list* (append *tenki-list* (list (send msg :data))))
 			     ;;added end 
 			     )
 			 )
 		       (if (= *name_learn* 1)
 			   ;;added
 			   (progn
-			     (setq *animal_data* (concatenate string *animal_data* (send msg :data)))
-			     (setq *animal-list* (append *animal-list* (list (send msg :data))))
+			     (setq *comefrom_data* (concatenate string *comefrom_data* (send msg :data)))
+			     (setq *comefrom-list* (append *comefrom-list* (list (send msg :data))))
 			     )
 			 )
 		       (if (= *name_learn* 2)
-			   ;;added
-			   (progn
-			     (setq *subject_data* (concatenate string *subject_data* (send msg :data)))
-			     (setq *subject-list* (append *subject-list* (list (send msg :data))))
-			     )
-			 )
-		       (if (= *name_learn* 3)
 			   ;;added
 			   (progn
 			     (setq *food_data* (concatenate string *food_data* (send msg :data)))
 			     (setq *food-list* (append *food-list* (list (send msg :data))))
 			     )
 			 )
+		       (if (= *name_learn* 3)
+			   ;;added
+			   (progn
+			     (setq *subject_data* (concatenate string *subject_data* (send msg :data)))
+			     (setq *subject-list* (append *subject-list* (list (send msg :data))))
+			     )
+			 )
 		       (if (= *name_learn* 4)
 			   ;;added
 			   (progn
-			     (setq *color_data* (concatenate string *color_data* (send msg :data)))
-			     (setq *color-list* (append *color-list* (list (send msg :data))))
+			     (setq *image_data* (concatenate string *image_data* (send msg :data)))
+			     (setq *image-list* (append *image-list* (list (send msg :data))))
 			     )
 			 )
 		       
@@ -579,13 +545,14 @@
 (setq m (instance making_newspaper_about_you_class :init))
 
 (ros::advertise "/nao_taking_picture_permission" std_msgs::string 1)
-(ros::advertise "/nao_friend_okashi" std_msgs::string 1)
-(ros::advertise "/nao_friend_animal" std_msgs::string 1)
-(ros::advertise "/nao_friend_subject" std_msgs::string 1)
+(ros::advertise "/nao_friend_tenki" std_msgs::string 1)
+(ros::advertise "/nao_friend_comefrom" std_msgs::string 1)
 (ros::advertise "/nao_friend_food" std_msgs::string 1)
-(ros::advertise "/nao_friend_color" std_msgs::string 1)
+(ros::advertise "/nao_friend_subject" std_msgs::string 1)
+(ros::advertise "/nao_friend_image" std_msgs::string 1)
 (ros::advertise "/nao_secret_mode_name" std_msgs::string 1)
 (ros::advertise "/nao_secret_mode_favorite" std_msgs::string 1)
+(ros::advertise "/nao_secret_mode_subject" std_msgs::string 1)
 
 (ros::ros-info "start subscribing")
 (while (ros::ok)
