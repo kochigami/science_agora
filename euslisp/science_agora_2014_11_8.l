@@ -403,6 +403,7 @@
 		  (send *ni* :play-soundfile "/home/nao/wav_test/science_communicater_no_hondasan.wav")
 		  ;;呼ぶ動作
 		  (send *ni* :angle-vector-sequence (list wasurenaide wasurenaide2 wasurenaide3 *start-position*) (list 1000 1500 2000 4500))
+		  (unix:sleep 5)
 		  (send *ni* :play-soundfile "/home/nao/wav_test/nao_to_asondakoto_wasurenaidene.wav")
 		  ;;added 
 		  ;;(send *ni* :angle-vector-sequence (list wasurenaide wasurenaide2 wasurenaide3 *start-position*) (list 1000 1500 2000 4500))
@@ -552,8 +553,12 @@
 		(if (= *launchpad_count* 1)
 		    (progn
 		      (setq launchpad-count-msg (instance std_msgs::string :init))     
-		      (send launchpad-count-msg :data (elt *character-list* 0))
-		      (ros::publish "launchpad_hiragana_count" launchpad-count-msg)
+		      (if (consp *character-list*)
+			  (progn
+			    (send launchpad-count-msg :data (elt *character-list* 0))
+			    (ros::publish "launchpad_hiragana_count" launchpad-count-msg)
+			    )
+			)
 		      
 		      
 		      )

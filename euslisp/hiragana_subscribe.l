@@ -347,7 +347,7 @@
 			     (send *ni* :play-soundfile "/home/nao/wav_test/arigatou_teretyau.wav")
 			     (send *ni* :play-soundfile "/home/nao/wav_test/minna_nao_to_otomodachi_ni_nattekureru.wav")
 			     (send *ni* :angle-vector-sequence (list favorite_interview  *start-position*) (list 2000 3000))
-			     (unix:sleep 10) ;;要変更
+			     (unix:sleep 15) ;;要変更 ;;20
 			     (send *ni* :play-soundfile "/home/nao/wav_test/kinen_ni_syasin_wo_toruyo.wav")
 			     ;;test
 			     ;;(send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500))
@@ -368,9 +368,9 @@
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ni.wav")
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ichi.wav")
 			     (send *ni* :play-soundfile "/home/nao/wav_test/kasya.wav")
-			     (unix:sleep 15) ;;この配分をしらべる
+			     (unix:sleep 20) ;;この配分をしらべる
 			     (send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500)) ;;この配分をしらべる
-			     (unix:sleep 10)
+			     (unix:sleep 2)
 			     (ros::publish "/nao_friend_tenki" msg2)
 			     (ros::publish "/nao_friend_comefrom" msg3)
 			     (ros::publish "/nao_friend_food" msg4)
@@ -416,7 +416,7 @@
 					 )
 				     (progn
 				       ;;(send *ni* :play-soundfile "/home/nao/wav_test/nanda.wav")
-				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_hare_ga_daisuku_dayo.wav")
+				       (send *ni* :play-soundfile "/home/nao/wav_test/nao_ha_hare_ga_daisuki_dayo.wav")
 				       )
 				     )
 				   )
