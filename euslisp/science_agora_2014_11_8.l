@@ -773,7 +773,7 @@
                     (if (string= japanese-char "ん")
                         (send *ni* :play-soundfile "/home/nao/wav_test/n.wav"))
 		    (if (string= japanese-char "おしまい")
-                        (send *ni* :play-soundfile "/home/nao/wav_test/oboeruyo_attetaraokmarkuwomisete.wav"))
+                        (send *ni* :play-soundfile "/home/nao/wav_test/oboerukara_ok_mark_misete.wav"))
 
 		    ;;added
 		    ;;音声ファイルを増やす

@@ -267,6 +267,19 @@ doxygen/fast:
 .PHONY : doxygen/fast
 
 #=============================================================================
+# Target rules for targets named karuta_showing_demo
+
+# Build rule for target.
+karuta_showing_demo: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 karuta_showing_demo
+.PHONY : karuta_showing_demo
+
+# fast build rule for target.
+karuta_showing_demo/fast:
+	$(MAKE) -f CMakeFiles/karuta_showing_demo.dir/build.make CMakeFiles/karuta_showing_demo.dir/build
+.PHONY : karuta_showing_demo/fast
+
+#=============================================================================
 # Target rules for targets named object_learn_using_sift
 
 # Build rule for target.
@@ -461,6 +474,30 @@ gtest_main/fast:
 	$(MAKE) -f gtest/CMakeFiles/gtest_main.dir/build.make gtest/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
+src/karuta_showing_demo.o: src/karuta_showing_demo.cpp.o
+.PHONY : src/karuta_showing_demo.o
+
+# target to build an object file
+src/karuta_showing_demo.cpp.o:
+	$(MAKE) -f CMakeFiles/karuta_showing_demo.dir/build.make CMakeFiles/karuta_showing_demo.dir/src/karuta_showing_demo.cpp.o
+.PHONY : src/karuta_showing_demo.cpp.o
+
+src/karuta_showing_demo.i: src/karuta_showing_demo.cpp.i
+.PHONY : src/karuta_showing_demo.i
+
+# target to preprocess a source file
+src/karuta_showing_demo.cpp.i:
+	$(MAKE) -f CMakeFiles/karuta_showing_demo.dir/build.make CMakeFiles/karuta_showing_demo.dir/src/karuta_showing_demo.cpp.i
+.PHONY : src/karuta_showing_demo.cpp.i
+
+src/karuta_showing_demo.s: src/karuta_showing_demo.cpp.s
+.PHONY : src/karuta_showing_demo.s
+
+# target to generate assembly for a file
+src/karuta_showing_demo.cpp.s:
+	$(MAKE) -f CMakeFiles/karuta_showing_demo.dir/build.make CMakeFiles/karuta_showing_demo.dir/src/karuta_showing_demo.cpp.s
+.PHONY : src/karuta_showing_demo.cpp.s
+
 src/object_learn_using_sift.o: src/object_learn_using_sift.cpp.o
 .PHONY : src/object_learn_using_sift.o
 
@@ -505,6 +542,7 @@ help:
 	@echo "... install"
 	@echo "... install/local"
 	@echo "... install/strip"
+	@echo "... karuta_showing_demo"
 	@echo "... list_install_components"
 	@echo "... object_learn_using_sift"
 	@echo "... rebuild_cache"
@@ -522,6 +560,9 @@ help:
 	@echo "... tests"
 	@echo "... gtest"
 	@echo "... gtest_main"
+	@echo "... src/karuta_showing_demo.o"
+	@echo "... src/karuta_showing_demo.i"
+	@echo "... src/karuta_showing_demo.s"
 	@echo "... src/object_learn_using_sift.o"
 	@echo "... src/object_learn_using_sift.i"
 	@echo "... src/object_learn_using_sift.s"

@@ -358,19 +358,32 @@
 			     (unix:sleep 4) ;;要調整
 		
 			     (send *ni* :play-soundfile "/home/nao/wav_test/jyuu.wav")
+			     (unix:sleep 3)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/kyuu.wav")
+			     (unix:sleep 3)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/hachi.wav")
+			     (unix:sleep 3)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/nana.wav")
+			     (unix:sleep 3)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/roku.wav")
+			     (unix:sleep 3)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/go.wav")
+			     (unix:sleep 1)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/yon.wav")
+			     (unix:sleep 1)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/san.wav")
+			     (unix:sleep 1)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ni.wav")
+			     (unix:sleep 1)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/ichi.wav")
+			     (unix:sleep 1)
 			     (send *ni* :play-soundfile "/home/nao/wav_test/kasya.wav")
-			     (unix:sleep 20) ;;この配分をしらべる
-			     (send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500)) ;;この配分をしらべる
-			     (unix:sleep 2)
+			    ;;(unix:sleep 2)
+			     
+			    (send *ni* :angle-vector-sequence (list *first-pose* kasya *first-pose*) (list 500 2000 2500)) ;;この配分をしらべる
+			    
+			    (unix:sleep 2)
+			    
 			     (ros::publish "/nao_friend_tenki" msg2)
 			     (ros::publish "/nao_friend_comefrom" msg3)
 			     (ros::publish "/nao_friend_food" msg4)
